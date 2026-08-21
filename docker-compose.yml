@@ -1,0 +1,26 @@
+name: floci-course
+services:
+  floci:
+    image: floci/floci:latest
+    container_name: floci
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${FLOCI_HOST_DATA_DIR:?run ./scripts/setup/floci-up.sh}:/app/data
+    environment:
+      FLOCI_STORAGE_MODE: ${FLOCI_STORAGE_MODE:-hybrid}
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+      FLOCI_STORAGE_HOST_PERSISTENT_PATH: ${FLOCI_HOST_DATA_DIR}
+      FLOCI_STORAGE_PRUNE_VOLUMES_ON_DELETE: "false"
+      FLOCI_DOCKER_RESOURCE_NAMESPACE: floci-course
+      FLOCI_HOSTNAME: floci
+      FLOCI_SERVICES_DOCKER_NETWORK: floci-course_default
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -sf http://localhost:4566/_floci/health || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 20s
