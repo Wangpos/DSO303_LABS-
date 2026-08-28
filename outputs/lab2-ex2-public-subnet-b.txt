@@ -1,0 +1,1 @@
+SubnetId: subnet-e117bd87 | AssociationId: rtbassoc-e54d2e41

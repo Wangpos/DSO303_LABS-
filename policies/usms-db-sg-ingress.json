@@ -1,0 +1,13 @@
+[
+  {
+    "IpProtocol": "tcp",
+    "FromPort": 5432,
+    "ToPort": 5432,
+    "UserIdGroupPairs": [
+      {
+        "GroupId": "sg-b5c6042faa37ce546",
+        "Description": "PostgreSQL from the USMS application tier"
+      }
+    ]
+  }
+]

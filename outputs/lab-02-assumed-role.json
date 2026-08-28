@@ -1,0 +1,13 @@
+{
+    "Credentials": {
+        "AccessKeyId": "ASIAURUHE2T74VE4Z7A8",
+        "SecretAccessKey": "puzwe7iQgQZbNPK3ZehydakwzqcVb8JtgrOZUVFV",
+        "SessionToken": "NF3r99x5IepHVIGWT7DQWhS94JF2aeDBOEwq9tQz3phqjZokCyqlnfacn55CnD7hGwwB3aTBiFtPoXdxRWnMY6hqe6ldhNV12fla9b3ApI8DFb4uXVm5VPH2iHMLl7nr3PNFya5KAhDAOIhLcRNYtONhTMVMO0NCopzhMJhTiqGmA1X4ckkT1fJXW4l7GUmmW9N99h8X",
+        "Expiration": "2026-08-27T19:46:23.689309+00:00"
+    },
+    "AssumedRoleUser": {
+        "AssumedRoleId": "AROA51QYN6VLVW79FM5K:lab02-vpc-build",
+        "Arn": "arn:aws:sts::000000000000:assumed-role/usms-developer-role/lab02-vpc-build"
+    },
+    "PackedPolicySize": 0
+}

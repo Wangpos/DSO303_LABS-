@@ -1,0 +1,1 @@
+A NAT Gateway is a single Availability Zone (AZ) resource bound to specific physical host hardware. If an outage affects AZ us-east-1a, a single NAT Gateway located in us-east-1a becomes unreachable, leaving private subnets across all AZs without outbound internet access. High-availability architectures mandate deploying one NAT Gateway per AZ to isolate failure domains.

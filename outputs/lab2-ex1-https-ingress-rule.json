@@ -1,0 +1,17 @@
+{
+    "Return": true,
+    "SecurityGroupRules": [
+        {
+            "SecurityGroupRuleId": "sgr-aa382b660f6b3c661",
+            "GroupId": "sg-53a2979b691d8f44b",
+            "GroupOwnerId": "000000000000",
+            "IsEgress": false,
+            "IpProtocol": "tcp",
+            "FromPort": 443,
+            "ToPort": 443,
+            "CidrIpv4": "0.0.0.0/0",
+            "Description": "HTTPS from internet",
+            "Tags": []
+        }
+    ]
+}
