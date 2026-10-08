@@ -1,0 +1,12 @@
+# aws-floci-course - never commit secrets or local emulator state
+# Private keys
+*.pem
+*.key
+# Command output and secrets live in outputs/; keep only the placeholder
+outputs/*
+!outputs/.gitkeep
+# Emulator data and OS noise
+floci-data/
+.DS_Store
+# 300-line empty CLI skeleton (Lab 03 Step 7)
+templates/*-full.json
