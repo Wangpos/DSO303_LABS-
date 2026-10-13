@@ -1,6 +1,0 @@
-{
-    "AssociationId": "rtbassoc-dd515dcd",
-    "AssociationState": {
-        "State": "associated"
-    }
-}
