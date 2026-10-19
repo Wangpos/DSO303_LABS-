@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Verify every Lab 04 artefact exists and is configured correctly.
 # Exit 1 if anything is missing. Read-only; safe to run at any time.
+#
+# Expected: PASS=39 FAIL=0 (after Lab 05 Exercise 2). Lab 05 Step 13 moved usms-enrolment-sg's
+# source from usms-app-sg to usms-alb-sg, so the source check now asserts usms-alb-sg and a second
+# check asserts usms-app-sg is gone. A count written down here makes an unexpected change visible;
+# an unwritten one lets a silently skipped or deleted check look like a pass.
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -10,8 +15,11 @@ source "$REPO_ROOT/configs/lab-01.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-02.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-03.env" 2>/dev/null || true
 source "$REPO_ROOT/configs/lab-04.env" 2>/dev/null || true
+# Lab 05 may not have been done yet; a missing file leaves USMS_ALB_SG=none and a readable FAIL.
+source "$REPO_ROOT/configs/lab-05.env" 2>/dev/null || true
 
 : "${USMS_APP_SG:=none}"
+: "${USMS_ALB_SG:=none}"
 : "${USMS_PRIVATE_SUBNET_A:=none}"
 : "${USMS_PRIVATE_SUBNET_B:=none}"
 : "${USMS_ECS_CLUSTER:=usms-ecs-cluster}"
@@ -94,8 +102,12 @@ check "service desiredCount is $USMS_ECS_DESIRED_BASELINE (one task per Availabi
 
 echo "== Lab 04 networking =="
 check "usms-enrolment-sg exists" "aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG"
-check "usms-enrolment-sg is sourced from usms-app-sg (not a CIDR)" \
-  "test \"\$(aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[0].UserIdGroupPairs[0].GroupId' --output text)\" = $USMS_APP_SG"
+# Property: the tasks accept traffic only from the named tier in front of them, never from a CIDR.
+# Since the Lab 05 cutover that tier is the load balancer (usms-alb-sg), not the web tier.
+check "usms-enrolment-sg is sourced from usms-alb-sg (not a CIDR)" \
+  "aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].UserIdGroupPairs[].GroupId' --output text | grep -qw $USMS_ALB_SG && test -z \"\$(aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].IpRanges[].CidrIp' --output text)\""
+check "usms-app-sg is no longer a source on usms-enrolment-sg" \
+  "! aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].UserIdGroupPairs[].GroupId' --output text | grep -qw $USMS_APP_SG"
 check "usms-enrolment-sg admits NOTHING from 0.0.0.0/0" \
   "aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG >/dev/null && ! aws ec2 describe-security-groups --group-ids $USMS_ENROLMENT_SG --query 'SecurityGroups[0].IpPermissions[].IpRanges[].CidrIp' --output text | grep -q '0.0.0.0/0'"
 
