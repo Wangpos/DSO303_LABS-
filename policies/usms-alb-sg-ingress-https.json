@@ -1,0 +1,8 @@
+[
+  {
+    "IpProtocol": "tcp",
+    "FromPort": 443,
+    "ToPort": 443,
+    "IpRanges": [ { "CidrIp": "0.0.0.0/0", "Description": "HTTPS from the internet - needs an HTTPS listener and a certificate before anything answers" } ]
+  }
+]
