@@ -340,7 +340,7 @@ Review question answers and the "Your turn" answers are in
 | `scripts/utilities/verify-lab-06.sh` | 42 checks |
 | `scripts/utilities/usms-scaling-report.sh`, `usms-scaling-history.sh` | Exercises 3 and 5 |
 | `scripts/cleanup/lab-06-cleanup.sh` | end of course only, run before the lab-05 and lab-04 cleanups |
-| `screenshots/lab6/01-12` | evidence (see [guide.md](guide.md)) |
+| `screenshots/lab6/01-12` | evidence |
 
 ---
 
