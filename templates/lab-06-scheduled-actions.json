@@ -1,0 +1,17 @@
+{
+  "_comment": "Lab 06 Step 11 intent. Floci 2.0.1 rejects PutScheduledAction (UnsupportedOperation); on real AWS apply each entry with put-scheduled-action.",
+  "ScheduledActions": [
+    {
+      "ScheduledActionName": "usms-enrolment-morning-scale-out",
+      "Schedule": "cron(45 7 ? * MON-FRI *)",
+      "Timezone": "Asia/Thimphu",
+      "ScalableTargetAction": { "MinCapacity": 4, "MaxCapacity": 10 }
+    },
+    {
+      "ScheduledActionName": "usms-enrolment-evening-scale-in",
+      "Schedule": "cron(0 20 ? * MON-FRI *)",
+      "Timezone": "Asia/Thimphu",
+      "ScalableTargetAction": { "MinCapacity": 2, "MaxCapacity": 10 }
+    }
+  ]
+}
