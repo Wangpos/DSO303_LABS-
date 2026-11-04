@@ -192,7 +192,7 @@ source configs/lab-03.env; source configs/lab-04.env
 export AWS_PAGER=""
 ```
 
-### 6.1 Main Lab Steps
+f### 6.1 Main Lab Steps
 
 ---
 
