@@ -49,6 +49,9 @@ spec:
         project: usms
         tier: app
     spec:
+      # Lab 08 Step 11: only schedule onto node-group nodes
+      nodeSelector:
+        workload: usms
       # Exercise 4: prefer one pod per node. ScheduleAnyway = advisory, so a
       # single-node cluster still schedules both replicas instead of leaving one Pending.
       topologySpreadConstraints:
@@ -125,18 +128,7 @@ spec:
     - name: http
       port: 80
       targetPort: http
----
-# Exercise 4: enforced. A voluntary disruption (drain, eviction) may never leave
-# usms-enrolment with fewer than one ready pod.
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: usms-enrolment-pdb
-  namespace: usms
-  labels:
-    app: usms-enrolment
-spec:
-  minAvailable: 1
-  selector:
-    matchLabels:
-      app: usms-enrolment
+# Lab 07 Exercise 4's PodDisruptionBudget (usms-enrolment-pdb, minAvailable: 1) used to
+# live here. Lab 08 Step 12 took ownership of that name with maxUnavailable: 1, which
+# scales with the HPA's replica count: see manifests/lab-08/30-pdb-gateway.yaml.
+# Defining it in both files would make every apply of one silently flip the other.

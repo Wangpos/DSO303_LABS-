@@ -1,0 +1,39 @@
+# Lab 08 Exercise 4 - expose /results to the university network only, on the SAME ALB.
+#
+# Rung: Ingress (top of the ladder) -> usms-results ClusterIP (bottom rung). No new Service,
+# no second type: LoadBalancer - every LoadBalancer Service is its own NLB and its own bill.
+#
+# Real EKS (AWS Load Balancer Controller); every annotation is inert on this k3s cluster:
+#   group.name     joins this Ingress to usms-portal-ingress's IngressGroup -> ONE ALB, one bill
+#   conditions.*   ALB listener-rule condition: only source IPs in the university range match
+#   203.0.113.0/24 is a documentation placeholder (RFC 5737) for the university's real CIDR
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: usms-results-ingress
+  namespace: usms
+  labels:
+    app: usms-results
+    project: usms
+    lab: "05b"
+  annotations:
+    alb.ingress.kubernetes.io/group.name: usms-portal
+    alb.ingress.kubernetes.io/group.order: "10"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    alb.ingress.kubernetes.io/conditions.usms-results: >
+      [{"field":"source-ip","sourceIpConfig":{"values":["203.0.113.0/24"]}}]
+    alb.ingress.kubernetes.io/tags: Project=USMS,Tier=web,Lab=08,Exercise=4
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /results
+            pathType: Prefix
+            backend:
+              service:
+                name: usms-results
+                port:
+                  number: 80

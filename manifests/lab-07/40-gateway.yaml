@@ -50,7 +50,8 @@ metadata:
     project: usms
     tier: web
 spec:
-  replicas: 1
+  # Lab 08 Exercise 2: two replicas so usms-gateway-pdb (minAvailable: 1) allows one disruption
+  replicas: 2
   revisionHistoryLimit: 5
   selector:
     matchLabels:
@@ -62,6 +63,14 @@ spec:
         project: usms
         tier: web
     spec:
+      # Lab 08 Exercise 2: spread the two replicas across nodes when there is more than one
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: usms-gateway
       containers:
         - name: gateway
           image: nginx:1.27-alpine
@@ -96,19 +105,7 @@ spec:
         - name: conf
           configMap:
             name: usms-gateway-conf
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: usms-gateway
-  namespace: usms
-  labels:
-    app: usms-gateway
-spec:
-  type: ClusterIP
-  selector:
-    app: usms-gateway
-  ports:
-    - name: http
-      port: 80
-      targetPort: http
+# The usms-gateway Service used to be declared here as type ClusterIP (Lab 07).
+# Lab 08 Step 15 promoted it to LoadBalancer and owns it now:
+#   manifests/lab-08/50-service-loadbalancer.yaml
+# Keeping both would make every apply of this file silently demote the gateway.
