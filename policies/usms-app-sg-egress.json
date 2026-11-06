@@ -1,0 +1,14 @@
+[
+  { "IpProtocol": "tcp", "FromPort": 443, "ToPort": 443,
+    "PrefixListIds": [ { "PrefixListId": "pl-63a5400a", "Description": "Req 1: HTTPS to S3 through the usms-s3-endpoint gateway endpoint (Lab 10 transcripts)" } ] },
+  { "IpProtocol": "tcp", "FromPort": 443, "ToPort": 443,
+    "IpRanges": [ { "CidrIp": "0.0.0.0/0", "Description": "Req 2: HTTPS to AWS service endpoints incl. STS, via usms-nat" } ] },
+  { "IpProtocol": "tcp", "FromPort": 80, "ToPort": 80,
+    "UserIdGroupPairs": [ { "GroupId": "sg-3059e5c7a2deac0e6", "Description": "Req 3: enrolment API through the load balancer (Lab 05), never the tasks directly" } ] },
+  { "IpProtocol": "tcp", "FromPort": 5432, "ToPort": 5432,
+    "UserIdGroupPairs": [ { "GroupId": "sg-b29cfb5ae91478a43", "Description": "Req 4: PostgreSQL to the database tier" } ] },
+  { "IpProtocol": "udp", "FromPort": 53, "ToPort": 53,
+    "IpRanges": [ { "CidrIp": "10.0.0.2/32", "Description": "Req 5a: DNS over UDP to the VPC resolver (base+2) - every normal query" } ] },
+  { "IpProtocol": "tcp", "FromPort": 53, "ToPort": 53,
+    "IpRanges": [ { "CidrIp": "10.0.0.2/32", "Description": "Req 5b: DNS over TCP to the VPC resolver - truncated (>512 byte) answers retry over TCP" } ] }
+]

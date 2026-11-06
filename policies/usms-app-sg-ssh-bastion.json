@@ -1,0 +1,5 @@
+[
+  { "IpProtocol": "tcp", "FromPort": 22, "ToPort": 22,
+    "UserIdGroupPairs": [ { "GroupId": "sg-a76e55a201af44474",
+      "Description": "SSH from the USMS jump host tier only - replaces the CIDR-sourced SSH rule on usms-app-sg" } ] }
+]

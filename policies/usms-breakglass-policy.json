@@ -1,0 +1,11 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    { "Sid": "SuspendOrResumeTheEnrolmentScalableTarget", "Effect": "Allow",
+      "Action": [ "application-autoscaling:RegisterScalableTarget" ],
+      "Resource": "arn:aws:application-autoscaling:us-east-1:000000000000:scalable-target/36628253f0f540d6ae3910540dcf7194" },
+    { "Sid": "SeeTheCurrentSuspendedState", "Effect": "Allow",
+      "Action": [ "application-autoscaling:DescribeScalableTargets" ],
+      "Resource": "*" }
+  ]
+}

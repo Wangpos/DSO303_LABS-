@@ -1,0 +1,14 @@
+# USMS IAM audit - ACCEPTED findings (Lab 09 Exercise 2 Part B)
+#
+# Read by scripts/utilities/usms-iam-audit.sh. One finding per line, TAB-separated:
+#   role <TAB> text the finding contains <TAB> review-by (YYYY-MM-DD) <TAB> reason and compensating control
+#
+# Rules the audit enforces, so this cannot become a suppression list:
+#   - a line with no reason is IGNORED (the finding stays HIGH) and the audit says so;
+#   - a line past its review-by date is IGNORED (the finding stays HIGH) until someone re-decides;
+#   - the match is per role, so accepting a finding on one role never hides it on another.
+# Committed on purpose: every acceptance is a decision with an author, a date and a reason in git history.
+#
+usms-ec2-app-role	ec2.amazonaws.com with NO Condition	2027-05-06	EC2 delivers instance-profile credentials through the instance metadata service and sends no aws:SourceAccount or aws:SourceArn when it assumes the role, so a confused-deputy Condition would deny every instance. Compensating controls: IMDSv2 required with hop limit 1 on usms-web-01 (Step 11), and only a principal holding iam:PassRole on this role ARN can attach it to an instance (USMSDeployBase names it explicitly, Step 8).
+usms-eks-node-role	ec2.amazonaws.com with NO Condition	2027-05-06	Same mechanism as usms-ec2-app-role: EKS worker nodes are EC2 instances and receive this role through IMDS. Compensating controls: the node group launch template should require IMDSv2 with hop limit 1 (so pods cannot reach the node credentials), and Lab 08 Exercise 5 moves bucket access to an IRSA role so the node role does not need it.
+AWSServiceRoleForEcsApplicationAutoscaling	with NO Condition	2027-05-06	Service-linked role: its trust policy is owned by AWS and cannot be edited (UpdateAssumeRolePolicy is refused on service-linked roles). Only Application Auto Scaling can assume it, and its permissions are the AWS-managed minimum. Compensating control: CloudTrail alert on any CreateServiceLinkedRole or DeleteServiceLinkedRole call.
