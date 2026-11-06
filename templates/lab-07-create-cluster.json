@@ -1,0 +1,23 @@
+{
+  "name": "usms-eks-cluster",
+  "version": "1.30",
+  "roleArn": "arn:aws:iam::000000000000:role/usms-eks-cluster-role",
+  "resourcesVpcConfig": {
+    "subnetIds": [
+      "subnet-8414d8e6",
+      "subnet-4083c7d2",
+      "subnet-0c2aeee0",
+      "subnet-ccb62227"
+    ],
+    "securityGroupIds": [ "sg-1ad876d5bfec73f99" ],
+    "endpointPublicAccess": true,
+    "endpointPrivateAccess": true
+  },
+  "tags": {
+    "Name": "usms-eks-cluster",
+    "Project": "USMS",
+    "Tier": "app",
+    "Lab": "07",
+    "_lb_ports_": "8081,8082"
+  }
+}
