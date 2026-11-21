@@ -10,3 +10,4 @@ floci-data/
 .DS_Store
 # 300-line empty CLI skeleton (Lab 03 Step 7)
 templates/*-full.json
+labs/lab-11-cicd/app/dist/
