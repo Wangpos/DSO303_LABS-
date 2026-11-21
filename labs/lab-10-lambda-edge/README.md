@@ -60,6 +60,12 @@ ROLES
 Versions 1 of both edge functions (on `usms-lambda-exec-role`) still exist. The distribution and
 `configs/lab-10.env` point at the Exercise 1-2 releases (viewer **:2**, origin **:3**).
 
+> **About the figures.** Each figure in `screenshots/lab-10/` is a command run against this build on
+> 2026-11-22 (01:28-01:31 local), rendered with its captured output in my terminal's prompt style.
+> They were captured after the run. Read-only steps and the restart were **re-run** for the picture.
+> Steps that changed state (create-function, publish-version, update-alias) are shown by **reading the
+> state back**, or by `cat` of the evidence file written when the step ran.
+
 ---
 
 ## 4. Pre-flight (Steps 1-4)
@@ -88,6 +94,19 @@ Because of the second row, the Step 6 verify query `length(Statement[0].Principa
 here. I used `length(Statement[].Principal.Service)`, which returns **2**. `verify-lab-10.sh` reads every
 statement and passes.
 
+![Figure 01](../../screenshots/lab-10/lab-10-01-floci-up.png)
+*Figure 01: Floci up; the storage check's three sections pass (running, hybrid, data directory).*
+
+![Figure 02](../../screenshots/lab-10/lab-10-02-env-identity.png)
+*Figure 02: all nine env files sourced, account 000000000000, and the bucket, role and account names the lab needs.*
+
+![Figure 03](../../screenshots/lab-10/lab-10-03-dirs-probe.png)
+*Figure 03: the three source directories and the support probe: everything SUPPORTED (Path A), plus the limitations appended during the lab.*
+
+![Figure 05](../../screenshots/lab-10/lab-10-05-lambda-basic-policy.png)
+*Figure 05: USMSLambdaBasic recreated as a managed policy (own logs + GetObject on transcripts) and attached; Lab 09's inline policy left in place.*
+
+
 ---
 
 ## 5. Procedure, Evidence and Observations
@@ -102,10 +121,18 @@ statement and passes.
 - The policy is held by `usms-ec2-app-role`, `usms-ecs-task-role` and `usms-eks-node-role`.
   `USMSStudentDataReadOnly` (Lab 09) is held by `usms-transcripts-reader-role`.
 
+![Figure 04](../../screenshots/lab-10/lab-10-04-bucket-checkpoint1.png)
+*Figure 04: head-bucket exits 0, three tags, and USMSStudentDataReadWrite's ARNs now name a real bucket held by three roles.*
+
+
 ### 5.2 Execution role (Step 6) - Checkpoint 2
 
 The trust policy now has `lambda.amazonaws.com` (scoped) and `edgelambda.amazonaws.com`. The
 attached policy is `USMSLambdaBasic`. `EDGE_ROLE_ARN = arn:aws:iam::000000000000:role/usms-lambda-exec-role`.
+
+![Figure 06](../../screenshots/lab-10/lab-10-06-trust-two-principals.png)
+*Figure 06: the two-statement trust policy: lambda keeps Lab 09's conditions, edgelambda is added; 2 principals.*
+
 
 ### 5.3 viewer-request function (Steps 7-9) - Checkpoint 3
 
@@ -120,16 +147,37 @@ attached policy is `USMSLambdaBasic`. `EDGE_ROLE_ARN = arn:aws:iam::000000000000
 The first invoke took about 31 s, while Floci pulled the Node.js runtime image. Later invokes take
 about 1 s.
 
+![Figure 07](../../screenshots/lab-10/lab-10-07-viewer-handler-source.png)
+*Figure 07: the handler passes node --check and kept `${studentId.toLowerCase()}` (quoted heredoc).*
+
+![Figure 08](../../screenshots/lab-10/lab-10-08-viewer-function.png)
+*Figure 08: one archive entry, index.mjs; the function at 128 MB, 5 s, Active (read back via version 1).*
+
+![Figure 09](../../screenshots/lab-10/lab-10-09-viewer-allow.png)
+*Figure 09: allow path: Error None, URI lower-cased, x-usms-edge stamped with stu-00417.*
+
+![Figure 10](../../screenshots/lab-10/lab-10-10-viewer-deny-your-turn.png)
+*Figure 10: Your turn - deny path: a response object, status 403, no uri key.*
+
+
 ### 5.4 Logs (Step 10)
 
 `--log-type Tail` returned **`LogResult: None`**. The group `/aws/lambda/usms-edge-viewer-request`
 exists with one stream and 0 bytes. This handler never logs, so the returned payloads are the
 evidence, as the lab's limitation box allows. This is recorded in the probe file.
 
+![Figure 11](../../screenshots/lab-10/lab-10-11-logs-limitation.png)
+*Figure 11: Floci limitation: LogResult None; the group and one stream exist with 0 bytes.*
+
+
 ### 5.5 Version (Step 11) - Checkpoint 4
 
 `publish-version` gave **1**: `arn:aws:lambda:us-east-1:000000000000:function:usms-edge-viewer-request:1`.
 `list-versions-by-function` shows `$LATEST` and `1`, and the `:[0-9]+$` check reports *version-qualified*.
+
+![Figure 12](../../screenshots/lab-10/lab-10-12-version-checkpoint4.png)
+*Figure 12: versions of the viewer function and the version-qualified check.*
+
 
 ### 5.6 origin-response function (Steps 12-13)
 
@@ -140,6 +188,10 @@ evidence, as the lab's limitation box allows. This is recorded in the probe file
     evidence that the two functions compose.
 - **Version 1** was published.
 
+![Figure 13](../../screenshots/lab-10/lab-10-13-origin-response.png)
+*Figure 13: origin-response invoked: security headers, cache-control and the chain marker; origin headers survive (CSP present because this was re-run after Exercise 1).*
+
+
 ### 5.7 Edge restrictions (Step 14) - Checkpoint 5
 
 - **Setting environment variables succeeded.** That's correct: the mistake is legal *for Lambda* and is
@@ -147,6 +199,10 @@ evidence, as the lab's limitation box allows. This is recorded in the probe file
 - **Cleared** with `Variables={}`.
 - **`edge_eligibility`** (`outputs/lab-10-function-inventory.json`): six `ok` per function and
   **0 `NO` lines**.
+
+![Figure 14](../../screenshots/lab-10/lab-10-14-env-var-mistake.png)
+*Figure 14: environment variables cleared (null) and the eligibility inventory: six ok per function, 0 NO lines.*
+
 
 ### 5.8 CloudFront distribution, Path A (Step 15) - Checkpoint 6
 
@@ -160,6 +216,13 @@ evidence, as the lab's limitation box allows. This is recorded in the probe file
 
 After the exercises, `update-distribution` repointed the associations to viewer **:2** and origin **:3**
 (§9). Floci accepted it and reports `Deployed`.
+
+![Figure 15](../../screenshots/lab-10/lab-10-15-distribution-path-a.png)
+*Figure 15: the distribution record, its two version-qualified associations (now :2/:3 after the exercises), Deployed.*
+
+![Figure 16](../../screenshots/lab-10/lab-10-16-distribution-validation.png)
+*Figure 16: the cache key (one header, no cookies, no query string) and the Path B structural validation: 11 ok, no errors.*
+
 
 ### 5.9 The chain end to end (Step 16) - Checkpoint 7
 
@@ -175,6 +238,13 @@ The allow trace was restored afterwards for Exercise 5.
 **Change from the lab text:** the deny branch now also deletes its temporary `.edge-step1.json`. The
 original left that file in `outputs/`.
 
+![Figure 17](../../screenshots/lab-10/lab-10-17-simulate-allow.png)
+*Figure 17: allow run: three stages, the chain header proves composition.*
+
+![Figure 18](../../screenshots/lab-10/lab-10-18-simulate-deny.png)
+*Figure 18: deny run: one stage, 403, origin never contacted; the allow trace restored.*
+
+
 ### 5.10 Regional notifier (Steps 17-18) - Checkpoint 8
 
 - **`notifier.py`** compiles, and its two `os.environ.get` lines are the contrast with the edge
@@ -185,6 +255,13 @@ original left that file in `outputs/`.
 - **"Your turn"** (`outputs/lab-10-alias-rollback.txt`): published **v2**, then `live` → 2, then
   `live` → 1. The versions list `$LATEST 2 1` throughout, so no version was deleted.
 
+![Figure 19](../../screenshots/lab-10/lab-10-19-notifier-alias.png)
+*Figure 19: notifier compiles, two os.environ.get lines, alias live -> 1, and its environment variables.*
+
+![Figure 20](../../screenshots/lab-10/lab-10-20-alias-rollback-your-turn.png)
+*Figure 20: Your turn - live moved to 2 and back to 1; versions $LATEST 2 1 throughout (captured during the run).*
+
+
 ### 5.11 Resource policy (Step 19)
 
 `add-permission --qualifier live`, statement `usms-s3-transcript-upload`: principal `s3.amazonaws.com`,
@@ -194,12 +271,20 @@ action `lambda:InvokeFunction`, resource `...:usms-transcript-notifier:live`. Th
 **Floci limitation:** `--source-account` was accepted, but `get-policy` shows only the `ArnLike
 AWS:SourceArn` condition. The `StringEquals AWS:SourceAccount` block is missing.
 
+![Figure 21](../../screenshots/lab-10/lab-10-21-resource-policy.png)
+*Figure 21: the function policy on :live - s3.amazonaws.com, InvokeFunction, ArnLike SourceArn; SourceAccount not stored by Floci.*
+
+
 ### 5.12 Notification and the first object (Step 20) - Checkpoint 9
 
 - `templates/lab-10-bucket-notification.json` (unquoted heredoc) targets `...:live`, with
   `s3:ObjectCreated:*`, `prefix=transcripts/` and `suffix=.json`.
 - Uploaded `outputs/lab-08-scaling-evidence.json` → `transcripts/evidence/lab-08-scaling-evidence.json`
   (2822 B), the first object in the course's bucket.
+
+![Figure 22](../../screenshots/lab-10/lab-10-22-notification-checkpoint9.png)
+*Figure 22: the notification document, its configuration on the bucket targeting :live, and the objects under transcripts/.*
+
 
 ### 5.13 Proof the notifier ran (Step 21)
 
@@ -218,6 +303,16 @@ AWS:SourceArn` condition. The `StringEquals AWS:SourceAccount` block is missing.
   and `transcripts/evidence/ignore-me.txt` (wrong suffix) were both uploaded, and neither produced a
   `USMS_NOTIFY` line.
 
+![Figure 23](../../screenshots/lab-10/lab-10-23-notifier-ran.png)
+*Figure 23: real S3 delivery: USMS_NOTIFY lines for the uploads, readable true.*
+
+![Figure 24](../../screenshots/lab-10/lab-10-24-notifier-synthetic.png)
+*Figure 24: the synthetic fallback through :live: processed 1, ExecutedVersion reported as $LATEST, LogResult None.*
+
+![Figure 25](../../screenshots/lab-10/lab-10-25-filter-your-turn.png)
+*Figure 25: Your turn - wrong prefix and wrong suffix uploaded, no USMS_NOTIFY for either.*
+
+
 ### 5.14 Restart (Step 22) - Checkpoint 10
 
 - **Inventory:** I added the distribution to the lab's `inventory()`, since it exists on Path A.
@@ -226,6 +321,13 @@ AWS:SourceArn` condition. The `StringEquals AWS:SourceAccount` block is missing.
 - **Code survived too:** `usms-edge-simulate.sh` still produced the full chain header after the
   restart, so the code survived, not only the names.
 
+![Figure 26](../../screenshots/lab-10/lab-10-26-pre-restart.png)
+*Figure 26: inventory, then floci-down.sh / floci-up.sh and whoami.*
+
+![Figure 27](../../screenshots/lab-10/lab-10-27-post-restart-checkpoint10.png)
+*Figure 27: inventory again, diff IDENTICAL, and the edge chain still executes after the restart.*
+
+
 ### 5.15 `configs/lab-10.env` (Step 23)
 
 - **Written:** with an unquoted heredoc. **25 exports**, `all values populated`, and it sources
@@ -233,6 +335,10 @@ AWS:SourceArn` condition. The `StringEquals AWS:SourceAccount` block is missing.
 - **Refreshed after Exercises 1-2:** the four edge version lines, the version ARNs and
   `USMS_EDGE_ROLE_ARN` now describe what the distribution uses (viewer:2, origin:3,
   `usms-edge-exec-role`). Without that, `VERSION=3` would have sat next to `VERSION_ARN=...:1`.
+
+![Figure 28](../../screenshots/lab-10/lab-10-28-lab10-env.png)
+*Figure 28: configs/lab-10.env: 25 exports, all populated, sources cleanly.*
+
 
 ---
 
@@ -245,6 +351,16 @@ after the exercises (`outputs/lab-10-verify.txt`).
 the lab text: step 2/6 now actually **disables** the distribution (`update-distribution` with
 `Enabled: false`) before deleting it. The original only printed that it would, and real CloudFront
 refuses to delete an enabled distribution. It also states that `USMSLambdaBasic` is left in place.
+
+![Figure 29](../../screenshots/lab-10/lab-10-29-verify-lab-10.png)
+*Figure 29: verify-lab-10.sh: PASS=51 FAIL=0.*
+
+![Figure 30](../../screenshots/lab-10/lab-10-30-cleanup-not-run.png)
+*Figure 30: cleanup script syntax-checked and not run; step 2/6 now disables before deleting.*
+
+![Figure 31](../../screenshots/lab-10/lab-10-31-git-commit-checkpoint11.png)
+*Figure 31: outputs/ and .zip ignored, only .gitkeep tracked, and the Lab 10 commit's file list.*
+
 
 ---
 
@@ -312,7 +428,7 @@ caps), and the distribution's effect on a real request path.
 | Scripts | `scripts/utilities/{usms-edge-simulate.sh, verify-lab-10.sh, usms-edge-report.sh, usms-s3-readiness.sh}`, `scripts/cleanup/lab-10-cleanup.sh` (not run) |
 | Config | `configs/lab-10.env` (25 exports) |
 | Evidence (git-ignored) | `outputs/lab-10-*`: support probe, viewer allow/deny, origin response, function inventory, distribution (+ validation), edge trace, alias rollback, notifier logs/direct, filter proof, pre/post restart, verify, ex1, ex2, ex5, edge report, s3 readiness; 3 × `.zip` |
-| Write-up | this report, [exercises.md](exercises.md), `notes/lab-10-notes.md`, `notes/lab-10-edge-design.md` |
+| Write-up | this report, [exercises.md](exercises.md), `notes/lab-10-notes.md`, `notes/lab-10-edge-design.md`, 36 figures in `screenshots/lab-10/` |
 
 ---
 

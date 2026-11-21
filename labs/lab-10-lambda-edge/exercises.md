@@ -59,6 +59,10 @@ On real AWS, `--qualifier 1` executes version 1's frozen archive and returns fou
 versions immutable in metadata only. The publish step was still right: v1 was neither deleted nor
 modified, which is what the constraint asked.
 
+![Exercise figure ex1](../../screenshots/lab-10/lab-10-ex1-csp-header.png)
+*Exercise figure ex1: the one-line SECURITY_HEADERS change and the per-version evidence: v1 keeps its own SHA, Floci executes $LATEST.*
+
+
 ---
 
 ## Exercise 2 - Intermediate: a dedicated edge execution role
@@ -121,6 +125,10 @@ distribution were pointed back at `:1`, the edge functions would run again with
 exercise removed. Least privilege for a versioned function only holds if old versions are retired, or
 their roles are tightened too.
 
+![Exercise figure ex2](../../screenshots/lab-10/lab-10-ex2-edge-role.png)
+*Exercise figure ex2: USMSEdgeBasic, the role per version (v1 on the old role), and the distribution on :2/:3.*
+
+
 ---
 
 ## Exercise 3 - Problem solving: an edge-readiness report
@@ -161,6 +169,10 @@ for example:
 
 I kept the rule as written and report what it gives, rather than add a reason to match the expected
 text.
+
+![Exercise figure ex3](../../screenshots/lab-10/lab-10-ex3-edge-report.png)
+*Exercise figure ex3: the report run from /tmp: valid JSON, notifier not eligible (environment variables).*
+
 
 ---
 
@@ -230,3 +242,10 @@ match a quoted term containing hyphens, although real CloudWatch Logs would. Sea
 $ git check-ignore -v outputs/lab-10-s3-readiness.txt
 .gitignore:6:outputs/*	outputs/lab-10-s3-readiness.txt
 ```
+
+![Exercise figure ex5a](../../screenshots/lab-10/lab-10-ex5a-readiness.png)
+*Exercise figure ex5a: the readiness file: bucket, notification, versions, CloudFront, and the draft's two reported mismatches.*
+
+![Exercise figure ex5b](../../screenshots/lab-10/lab-10-ex5b-trace-and-no-policy.png)
+*Exercise figure ex5b: the trace upload seen by the notifier, NoSuchBucketPolicy, and the readiness file git-ignored.*
+
