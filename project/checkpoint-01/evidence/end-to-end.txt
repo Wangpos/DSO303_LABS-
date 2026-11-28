@@ -1,0 +1,45 @@
+USMS end-to-end demonstration - 2026-11-28T09:59:52Z
+
+--- 1. identity: who am I, and what may this role do ---
+[ok] Account 000000000000 — this is Floci, not real AWS.
+USMSLambdaBasic	USMSObservabilityWrite
+
+--- 2. storage: the bucket four policies have named since Lab 01 ---
+{
+    "BucketRegion": "us-east-1"
+}
+head-bucket: exit 0
+
+--- 3. trigger: what the bucket does when an object arrives ---
+usms-transcript-upload	arn:aws:lambda:us-east-1:000000000000:function:usms-transcript-notifier:live
+
+--- 4. compute: the function that runs, and the version behind the alias ---
+4	python3.12	Active
+
+--- 5. the event: upload a transcript ---
+  log     ok   /usms/central/application
+  metric  ok   USMS/Application
+  trace   SKIPPED (X-Ray unavailable on this build) 1-6b0aa61a-e5f2f9189ba63711e9a212f6
+
+trace id: 1-6b0aa61a-e5f2f9189ba63711e9a212f6
+
+--- 6. logs: what it said ---
+USMS_EVENT {"event":"transcript.processed","faculty":"science","seconds":0.63,"trace_id":"1-6b0aa61a-e5f2f9189ba63711e9a212f6"}
+
+--- 7. metrics: what it counted ---
+CentralErrorCount
+EdgeDenyCount
+NotifyCount
+TranscriptLagSeconds
+TranscriptSecondsFromLogs
+TranscriptsProcessed
+
+--- 8. alarms: what would page somebody ---
+usms-transcript-lag-high	OK
+usms-notify-silence	OK
+  child usms-transcript-lag-high     OK
+  child usms-notify-silence          OK
+usms-transcript-pipeline-down (emulated from templates/lab-13-composite-alarm.json): OK
+
+--- 9. the dashboard somebody would look at ---
+6 widgets

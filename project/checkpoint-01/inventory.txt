@@ -1,0 +1,113 @@
+USMS project inventory - 2026-11-28T09:56:15Z
+account : 000000000000
+endpoint: http://localhost:4566
+
+== identity (Lab 01) ==
+usms-ec2-app-role
+usms-ecs-task-role
+usms-events-pipeline-role
+usms-eks-node-role
+usms-codepipeline-role
+usms-edge-exec-role
+usms-lambda-exec-role
+usms-eks-cluster-role
+usms-deploy-role
+usms-codebuild-role
+usms-developer-role
+usms-breakglass-role
+usms-ecs-exec-role
+usms-transcripts-reader-role
+USMSCodeBuildBase
+USMSObservabilityWrite
+USMSEventsStartPipeline
+USMSCodePipelineBase
+USMSECSTaskExecution
+USMSStudentDataReadWrite
+USMSEKSNodePolicy
+USMSStudentDataReadOnly
+USMSBreakGlassSuspendScaling
+USMSEdgeBasic
+USMSEKSClusterPolicy
+USMSLambdaBasic
+USMSPermissionsBoundary
+USMSDeployBase
+USMSDeveloperBase
+
+== network (Lab 02) ==
+vpc-fab9912c	10.0.0.0/16
+vpc-384d1580	10.0.0.0/16
+vpc-e7850d3a	10.0.0.0/16
+15
+
+== compute (Labs 03, 04, 05) ==
+i-72e3cbbe2ec42a154	stopped
+i-9a38e8fae9dd2a3e4	stopped
+i-4314867a781a3244a	stopped
+i-a878dbc918f88fd52	stopped
+i-0af6d73b9c6bbadc1	terminated
+i-aa6d1cb6d1df4e452	terminated
+arn:aws:ecs:us-east-1:000000000000:cluster/default	arn:aws:ecs:us-east-1:000000000000:cluster/usms-ecs-cluster
+usms-eks-cluster
+
+== storage and functions (Lab 10) ==
+usms-student-data	usms-pipeline-artifacts
+usms-edge-origin-response	nodejs20.x	PassThrough
+usms-edge-viewer-request	nodejs20.x	PassThrough
+usms-transcript-notifier	python3.12	Active
+
+== pipeline (Labs 11, 12) ==
+usms-enrolment-pipeline
+usms-enrolment-build	usms-results-build
+usms-enrolment
+
+== observability (Lab 13) ==
+/aws/codebuild/usms-enrolment-build	14
+/aws/codebuild/usms-lab11-s3-check	14
+/aws/codebuild/usms-probe-buildspec-delete-me	14
+/aws/codebuild/usms-probe-cp-delete-me	14
+/aws/codebuild/usms-results-build	14
+/aws/ecr/registry	None
+/aws/lambda/usms-edge-origin-response	14
+/aws/lambda/usms-edge-viewer-request	14
+/aws/lambda/usms-transcript-notifier	14
+/ecs/usms-enrolment	30
+/usms/central/application	30
+/usms/ecs/enrolment	30
+CentralErrorCount
+EdgeDenyCount
+NotifyCount
+TranscriptLagSeconds
+TranscriptSecondsFromLogs
+TranscriptsProcessed
+usms-transcript-lag-high	OK	None
+usms-enrolment-queue-high	OK	None
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmHigh-ee5cd0f2-42d2-4508-90da-69ff4dcd09e6	INSUFFICIENT_DATA	None
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmHigh-b5be575e-ff27-485f-b50e-1bd289b5aae2	INSUFFICIENT_DATA	None
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmLow-732f301a-32b6-4293-8570-36cb8969f89d	INSUFFICIENT_DATA	None
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmLow-e94fff5e-8f54-468f-9345-0dec78804d7d	INSUFFICIENT_DATA	None
+usms-notify-silence	OK	None
+None
+usms-overview
+
+== repository ==
+lab documents   : 13
+env files       : 13
+verify scripts  : 13
+cleanup scripts : 13
+commits         : 25
+tracked secrets : 0
+
+== verification ==
+scripts/utilities/verify-lab-01.sh       === Verifying Lab 01 IAM Setup ===
+scripts/utilities/verify-lab-02.sh       Results: 6 Passed, 0 Failed
+scripts/utilities/verify-lab-03.sh       PASS=35  FAIL=1
+scripts/utilities/verify-lab-04.sh       PASS=39  FAIL=0
+scripts/utilities/verify-lab-05.sh       failure after Step 13, on the usms-app-sg source check.
+scripts/utilities/verify-lab-06.sh                                                  the count; see Step 12 part 6.
+scripts/utilities/verify-lab-07.sh       PASS=24  FAIL=6
+scripts/utilities/verify-lab-08.sh       PASS=12  FAIL=22
+scripts/utilities/verify-lab-09.sh       what changed before doing anything else.
+scripts/utilities/verify-lab-10.sh       PASS=51  FAIL=0
+scripts/utilities/verify-lab-11.sh         Hygiene failing                    -> Step 21, and .gitignore.
+scripts/utilities/verify-lab-12.sh         Hygiene                     -> Steps 20 and 21.
+scripts/utilities/verify-lab-13.sh       PASS=49  FAIL=0
