@@ -1,0 +1,41 @@
+[
+  {
+    "logGroupName": "/aws/lambda/usms-transcript-notifier",
+    "filterName": "usms-notify-count",
+    "filterPattern": "USMS_NOTIFY",
+    "metricTransformations": [
+      {
+        "metricName": "NotifyCount",
+        "metricNamespace": "USMS/Application",
+        "metricValue": "1",
+        "defaultValue": 0
+      }
+    ]
+  },
+  {
+    "logGroupName": "/usms/central/application",
+    "filterName": "usms-central-errors",
+    "filterPattern": "ERROR",
+    "metricTransformations": [
+      {
+        "metricName": "CentralErrorCount",
+        "metricNamespace": "USMS/Application",
+        "metricValue": "1",
+        "defaultValue": 0
+      }
+    ]
+  },
+  {
+    "logGroupName": "/usms/central/application",
+    "filterName": "usms-transcript-seconds",
+    "filterPattern": "{ $.usms_event = \"transcript.processed\" }",
+    "metricTransformations": [
+      {
+        "metricName": "TranscriptSecondsFromLogs",
+        "metricNamespace": "USMS/Application",
+        "metricValue": "$.seconds",
+        "unit": "Seconds"
+      }
+    ]
+  }
+]
