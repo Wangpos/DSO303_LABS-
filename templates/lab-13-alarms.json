@@ -1,0 +1,32 @@
+[
+  {
+    "AlarmName": "usms-transcript-lag-high",
+    "AlarmDescription": "Transcript notification latency above 2s for 2 of 3 minutes",
+    "Namespace": "USMS/Application",
+    "MetricName": "TranscriptLagSeconds",
+    "Dimensions": [ { "Name": "Stage", "Value": "notify" } ],
+    "Statistic": "Maximum",
+    "Period": 60,
+    "EvaluationPeriods": 3,
+    "DatapointsToAlarm": 2,
+    "Threshold": 2,
+    "ComparisonOperator": "GreaterThanThreshold",
+    "TreatMissingData": "notBreaching",
+    "Unit": "Seconds",
+    "Tags": [ { "Key": "Project", "Value": "USMS" }, { "Key": "Lab", "Value": "13" } ]
+  },
+  {
+    "AlarmName": "usms-notify-silence",
+    "AlarmDescription": "No transcript notifications for 15 minutes - the pipeline has gone quiet",
+    "Namespace": "USMS/Application",
+    "MetricName": "NotifyCount",
+    "Statistic": "Sum",
+    "Period": 300,
+    "EvaluationPeriods": 3,
+    "DatapointsToAlarm": 3,
+    "Threshold": 1,
+    "ComparisonOperator": "LessThanThreshold",
+    "TreatMissingData": "breaching",
+    "Tags": [ { "Key": "Project", "Value": "USMS" }, { "Key": "Lab", "Value": "13" } ]
+  }
+]

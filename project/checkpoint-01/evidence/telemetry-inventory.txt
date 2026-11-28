@@ -1,0 +1,27 @@
+USMS telemetry inventory - 2026-11-28T09:38:23Z
+
+== log groups ==
+/aws/codebuild/usms-enrolment-build	None	0
+/aws/codebuild/usms-lab11-s3-check	None	0
+/aws/codebuild/usms-probe-buildspec-delete-me	None	0
+/aws/codebuild/usms-probe-cp-delete-me	None	0
+/aws/codebuild/usms-results-build	None	0
+/aws/ecr/registry	None	0
+/aws/lambda/usms-edge-origin-response	None	0
+/aws/lambda/usms-edge-viewer-request	None	0
+/aws/lambda/usms-transcript-notifier	None	0
+/ecs/usms-enrolment	None	0
+/usms/ecs/enrolment	7	0
+
+== alarms ==
+usms-enrolment-queue-high	USMS/Enrolment	EnrolmentQueueDepth	OK
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmHigh-ee5cd0f2-42d2-4508-90da-69ff4dcd09e6	AWS/ECS	ECSServiceAverageCPUUtilization	INSUFFICIENT_DATA
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmHigh-b5be575e-ff27-485f-b50e-1bd289b5aae2	AWS/ECS	ALBRequestCountPerTarget	INSUFFICIENT_DATA
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmLow-732f301a-32b6-4293-8570-36cb8969f89d	AWS/ECS	ECSServiceAverageCPUUtilization	INSUFFICIENT_DATA
+TargetTracking-service/usms-ecs-cluster/usms-enrolment-svc-AlarmLow-e94fff5e-8f54-468f-9345-0dec78804d7d	AWS/ECS	ALBRequestCountPerTarget	INSUFFICIENT_DATA
+
+== metric namespaces already present ==
+USMS/Enrolment
+USMS/Probe
+
+== dashboards ==
